@@ -1,0 +1,86 @@
+:root{
+  --color-disabled:#f7f7f7;
+  --color-light-extra:#f4f4f4;
+  --color-light:#f9f9f9;
+  --color-base:#e9e9e9;
+  --color-base-extra:#dbdbdb;
+  --color-heavy:#7e7e7e;
+  --color-heavy-extra:#dadada;
+  --color-bg:#fff;
+  --color-text:#1c1c1c;
+  --icon-chevron-up:url("data:image/svg+xml,<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'><path d='m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/></svg>");
+  --icon-chevron-down:url("data:image/svg+xml,<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>")
+}
+
+.dark{
+  --color-disabled:#8d8d8d;
+  --color-light-extra:#505050;
+  --color-light:#404040;
+  --color-base:#5a5a5a;
+  --color-base-extra:#4a4a4a;
+  --color-heavy:#cecece;
+  --color-heavy-extra:#707070;
+  --color-bg:#3b3b3b;
+  --color-text:#f7f7f7
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background-color:var(--color-bg);
+  color:var(--color-text);
+  white-space: nowrap;
+}
+
+
+tbody tr.checked{
+  background-color:var(--color-light-extra);
+}
+
+tbody tr:not(.checked):hover{
+  background-color:var(--color-light);
+}
+
+td,th{
+  border:1px solid var(--color-heavy-extra);
+  text-align:center;
+  padding:10px;
+  
+}
+
+th {
+  font-weight: bold;
+}
+
+thead {
+  background-color: rgb(4, 118, 153); /* 将表头底色改成黑色 */
+  color: white; /* 将表头文字颜色改为白色，以便与黑色底色形成对比 */
+}
+table.sortable th:not(.tb-checkbox-column){
+  cursor:pointer;
+  position:relative;
+  user-select:none;
+}
+
+table.sortable th:not(.tb-checkbox-column):hover{
+  background-color:var(--color-light);
+}
+
+table.sortable th:not(.tb-checkbox-column)::before,
+table.sortable th:not(.tb-checkbox-column)::after{
+  background-color:var(--color-heavy-extra);
+  right:.4rem;
+  position:absolute;
+  font-size:1.2rem;
+}
+
+table.sortable th:not(.tb-checkbox-column)::before{
+  content:" ";
+  -webkit-mask-image:var(--icon-chevron-up);
+  mask-image:var(--icon-chevron-up);
+  bottom:50%;
+  height:.6rem;
+  width:.6rem;
+}
+
+table.sortable th

@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        HD监控助手 V1.0
+    </title>
+    <link rel="stylesheet" href="css/table-actions.css" />
+    <link rel="stylesheet" href="css/thank.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/demo-purpose-styles.css" />
+    
+    <script src="https://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body class="dark">
+    <section id="table-container" class="container" >
+        <div class="theme-toggle">
+            <span onclick="toggleTheme()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-circle-half" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+                </svg>
+            </span>
+
+            <span>
+                <div id="title_contain">
+                <h1>
+                    &nbsp;&nbsp;&nbsp;监控助手
+                </h1>
+                </div>
+            </span>
+        </div>
+
+
+        <table id="machineTable" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        IP地址
+                    </th>
+                    <th>
+                        硬盘总数
+                    </th>
+                    <th>
+                        CPU使用率
+                    </th>
+                    <th>
+                        内存使用率
+                    </th>
+                    <th>
+                        已用内存
+                    </th>
+                    <th>
+                        总Plot数
+                    </th>
+                    <th data-format="YYYY/MM/DD">
+                        更新时间
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="contain_machine">
+
+            </tbody>
+        </table>
+        <p></p>
+        <table id="harddiskTable class="table">
+            <thead>
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        硬盘序列号
+                    </th>
+                    <th>
+                        设备名称
+                    </th>
+                    <th>
+                        型号
+                    </th>
+                    <th>
+                        容量
+                    </th>
+                    <th>
+                        已用
+                    </th>
+                    <th>
+                        使用率
+                    </th>
+                    <th>
+                        Plot数
+                    </th>
+                    <th>
+                        温度
+                    </th>
+                    <th>
+                        路径
+                    </th>
+                    <th>
+                        健康度
+                    </th>
+                    <th data-format="YYYY/MM/DD">
+                        更新时间
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="contain">
+
+            </tbody>
+        </table>
+    </section>
+    <script src="javascript/table-actions.js">
+    </script>
+    <script type="text/javascript">
+        const table = new TableActions("table", {
+            sortable: true,
+            paginable: false,
+            checkableRows: false,
+            checkableRowTdReference: "[data-ref]",
+            checkedElementsCallBack: function (checkedElements) {
+                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
+            },
+        });
+        function toggleTheme() {
+            document.querySelector("body").classList.toggle("dark")
+        }
+
+        // 这里每一个机器复制一段，修改里面的IP地址即可
+        // *************192.168.1.102:8765***************
+        var WEB_SOCKET;
+
+        var refresh_page = 0;
+
+        function refreshPage() {
+            console.log('refreshPage++.');
+            if (refresh_page != 1) {
+                console.log('refresh!!!');
+                location.reload();
+            }
+            setTimeout(function(){ refreshPage(); }, 20000);
+            console.log('refreshPage--.');
+        }
+
+           // *************展示单机硬盘数据信息***************
+        var WEB_SOCKET_Harddisk;
+        function connectWebSocketHD() {
+            console.log('connectWebSocketHD++' );
+            var str = '';
+
+            const params = new URLSearchParams(window.location.search);
+            const ip_addr = params.get('ip');
+            const interval = params.get('time');
+            const my_title = params.get('title');
+            
+            str += '<h1>';
+            str += '&nbsp;&nbsp;&nbsp;'
+            str += my_title?my_title:'监控助手'
+            str += '</h1>';
+            title_contain.innerHTML = str;
+
+            var server = ip_addr ? 'ws://'+ip_addr+':8765': 'ws://192.168.1.102:8765';
+            var time_interval = interval ? interval: '30';
+
+            WEB_SOCKET_Harddisk = new WebSocket(server + '/ws');
+
+            WEB_SOCKET_Harddisk.onopen = function (evt) {
+                console.log('硬盘Websocket打开连接 ...');
+
+                refresh_page = 1;
+
+                WEB_SOCKET_Harddisk.send(time_interval);
+            };
+
+            WEB_SOCKET_Harddisk.onmessage = function (evt) {
+                console.log('connectWebSocketHD 接收到来自服务器的消息: ' );
+                //如果这里是websocket数据则调用这个方法
+
+                refresh_page = 1;
+
+                showDataHardDisk(evt.data);
+
+                WEB_SOCKET_Harddisk.send(time_interval);
+            };
+
+            WEB_SOCKET_Harddisk.onclose = function (evt) {
+
+                refresh_page = 0;
+
+                console.log('connectWebSocketHD 连接关闭.');
+            };
+
+            console.log('connectWebSocketHD--' );
+        }
+
+        function showDataHardDisk(data) {
+
+            console.log('connectWebSocketHD- showDataHardDisk++.');
+            var arr = JSON.parse(data);
+            // 定义变量,存储生成的字符串内容,使用 += 拼接字符串形式
+            var str = '';
+            if(arr.Disks==null)
+            {
+                console.log('Disks 数据为空');
+                
+            }
+            else
+            {
+                arr.Disks.forEach(function (item) {
+                    str += '<tr>';
+                    str += `<td>${item.ID}</td>`;
+                    str += `<td>${item.Serial}</td>`;
+                    str += `<td>${item.DeviceName}</td>`;
+                    str += `<td>${item.Model}</td>`;
+                    str += `<td>${item.Size}</td>`;
+                    str += `<td>${item.Used}</td>`;
+                    str += `<td>${item.Usaged}</td>`;
+                    str += `<td>${item.NumOfPlot}</td>`;
+                    str += `<td>${item.Temp}</td>`;
+                    str += `<td>${item.Path}</td>`;
+                    str += `<td>${item.Healthy}</td>`;
+                    str += `<td>${item.GetDateTime}</td>`;
+                    str += '</tr>';
+                });
+                contain.innerHTML = str;
+            }        
+            
+            str = '';
+            if(arr.Machines==null)
+            {
+                console.log('Machines 数据为空');
+            }
+            else
+            {
+                arr.Machines.forEach(function (item) {
+                    str += '<tr>';
+                    str += `<td>${item.IP}</td>`;
+                    str += `<td>${item.HardDiskNum}</td>`;
+                    str += `<td>${item.CpuUsaged}</td>`;
+                    str += `<td>${item.MemUsaged}</td>`;
+                    str += `<td>${item.MemUsed}</td>`;
+                    str += `<td>${item.TotalPlot}</td>`;
+                    str += `<td>${item.GetDateTime}</td>`;
+                    str += '</tr>';
+                });
+                contain_machine.innerHTML = str;
+            }     
+
+            console.log('connectWebSocketHD- showDataHardDisk--.');
+
+        }
+
+        connectWebSocketHD();
+
+        setTimeout(function(){ refreshPage(); }, 20000);
+        
+    // *************结束*************
+    </script>
+
+</body>
+<footer style="background-color: #222; padding: 20px; text-align: center; color: #fff;">
+    <p style="font-size: 14px; margin: 0 0 0 0;">捐赠名单(时间顺序)：</p>
+    <div class="container_thank">
+		<div class="item">
+			<img src="./wechat/Loyi.jpg" alt="Loyi">
+			<span>Loyi(0.2XCH)</span>
+		</div>
+		<div class="item">
+			<img src="./wechat/Fushengruomeng.jpg" alt="浮生若梦">
+            <span>浮生若梦(0.2XCH)</span>
+		</div>
+    </div>
+    <p style="font-size: 14px;"><a href= "https://github.com/caszhao/HardDiskMonitor">访问 Github</a></p>
+    <p style="font-size: 14px;">Powered By 霍大侠 & ChatGPT & 阿豪</p>
+    <p style="font-size: 10px;">捐赠地址：xch1wrdcyq9euygcek9cudlvtuw0v52t93slkfz4vd7fjyjtknzflxms7r7nuu</p>
+</footer>
+</html>

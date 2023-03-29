@@ -113,21 +113,9 @@
             </tbody>
         </table>
     </section>
-    <script src="javascript/table-actions.js">
-    </script>
+   
     <script type="text/javascript">
-        const table = new TableActions("table", {
-            sortable: true,
-            paginable: false,
-            checkableRows: false,
-            checkableRowTdReference: "[data-ref]",
-            checkedElementsCallBack: function (checkedElements) {
-                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
-            },
-        });
-        function toggleTheme() {
-            document.querySelector("body").classList.toggle("dark")
-        }
+      
 
         // 这里每一个机器复制一段，修改里面的IP地址即可
         // *************192.168.1.102:8765***************
@@ -248,7 +236,18 @@
                 });
                 contain_machine.innerHTML = str;
             }     
-
+  	const table = new TableActions("harddiskTable ", {
+            sortable: true,
+            paginable: false,
+            checkableRows: false,
+            checkableRowTdReference: "[data-ref]",
+            checkedElementsCallBack: function (checkedElements) {
+                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
+            },
+        });
+        function toggleTheme() {
+            document.querySelector("body").classList.toggle("dark")
+        }
             console.log('connectWebSocketHD- showDataHardDisk--.');
 
         }
@@ -259,7 +258,8 @@
         
     // *************结束*************
     </script>
-
+ <script src="javascript/table-actions.js">
+    </script>
 </body>
 <footer style="background-color: #222; padding: 20px; text-align: center; color: #fff;">
     <p style="font-size: 14px; margin: 0 0 0 0;">捐赠名单(时间顺序)：</p>

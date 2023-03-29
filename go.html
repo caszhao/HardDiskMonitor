@@ -67,7 +67,7 @@
             </tbody>
         </table>
         <p></p>
-        <table id="harddiskTable class="table">
+        <table id="harddiskTable" class="table">
             <thead>
                 <tr>
                     <th>
@@ -214,6 +214,18 @@
                     str += '</tr>';
                 });
                 contain.innerHTML = str;
+	const table = new TableActions("harddiskTable ", {
+            sortable: true,
+            paginable: false,
+            checkableRows: false,
+            checkableRowTdReference: "[data-ref]",
+            checkedElementsCallBack: function (checkedElements) {
+                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
+            },
+        });
+        function toggleTheme() {
+            document.querySelector("body").classList.toggle("dark")
+        }
             }        
             
             str = '';
@@ -236,18 +248,7 @@
                 });
                 contain_machine.innerHTML = str;
             }     
-  	const table = new TableActions("harddiskTable ", {
-            sortable: true,
-            paginable: false,
-            checkableRows: false,
-            checkableRowTdReference: "[data-ref]",
-            checkedElementsCallBack: function (checkedElements) {
-                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
-            },
-        });
-        function toggleTheme() {
-            document.querySelector("body").classList.toggle("dark")
-        }
+  	
             console.log('connectWebSocketHD- showDataHardDisk--.');
 
         }

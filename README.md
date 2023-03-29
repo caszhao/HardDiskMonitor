@@ -59,6 +59,8 @@ sudo python3 server_websocket.py
 
 ip: 运行server_websocket.py的server端。
 
+选填参数：
+
 time: 为数据刷新时间time，不加time默认是30秒，监控也意味着读取，建议设置长一点。
 
 title：为左上角标题，可以设置成譬如“XX主机“。

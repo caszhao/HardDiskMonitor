@@ -24,7 +24,13 @@ Server端运行推荐Ubuntu系统，基于局域网通信，其他Linux理论可
 
 感谢最早的两位热心捐赠者Loyi和浮生若梦。为表感谢，捐赠者头像会默认嵌入页面中，请捐赠者转xch后与我联系。
 
-另外，如果捐赠者列表对你造成不便，请自行移除。
+如果捐赠者列表对你造成不便，请自行修改移除。
+
+捐赠者名单列表：
+Loyi、浮生若梦
+
+XCH地址：
+xch1wrdcyq9euygcek9cudlvtuw0v52t93slkfz4vd7fjyjtknzflxms7r7nuu
 
 #使用方法：
 ## 一、安装所需包

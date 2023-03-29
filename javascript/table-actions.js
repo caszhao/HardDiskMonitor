@@ -11,7 +11,7 @@ function newElement(element, id, classList = [], label, nodeToAppend) {
 class TableActions {
   constructor(element, options) {
     this.table =
-      typeof element === "string" ? document.querySelector(element) : element;
+      typeof element === "string" ? document.getElementById(element) : element;
 
     this.tableRows = [
       ...this.table.querySelector("tbody").querySelectorAll("tr"),

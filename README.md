@@ -32,7 +32,8 @@ Loyi、浮生若梦
 XCH地址：
 xch1wrdcyq9euygcek9cudlvtuw0v52t93slkfz4vd7fjyjtknzflxms7r7nuu
 
-#使用方法：
+# 使用方法：
+
 ## 一、安装所需包
 sudo apt install -y smartmontools net-tools lm-sensors python3-full python3-websockets python3-psutil
 

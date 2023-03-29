@@ -42,13 +42,19 @@ wget http://archive.ubuntu.com/ubuntu/pool/universe/h/hddtemp/hddtemp_0.3-beta15
 sudo apt install ./hddtemp_0.3-beta15-53_amd64.deb
 
 ## 二、Ubuntu上运行服务
+
+把server_websocket.py上传到Ubuntu中。使用管理员权限打开。
+
 sudo python3 server_websocket.py
 
 当然，你也可以后台运行。  nohup sudo python3 ./server_websocket.py >log.txt 2>err.txt &
 
 如果你的Linux主机有多个局域网IP，你可能需要手动修改server_websocket.py把IP固定下来，搜索local_ip，并改成你要的ip即可。默认端口为8765，如果没有冲突，可以不改。
 
-## 三、本地打开go.html后，使用参数传入局域网ip，参数：
+## 三、客户端
+
+本地客户端浏览器打开go.html，在浏览器地址栏按照以下需求填入地址。
+
 必填参数:
 
 ip: 运行server_websocket.py的server端。
@@ -57,6 +63,6 @@ time: 为数据刷新时间time，不加time默认是30秒，监控也意味着�
 
 title：为左上角标题，可以设置成譬如“XX主机“。
 
-以下例子为连接局域网IP为192.168.1.102的机器，数据刷新时间间隔120秒，该机器名称为“我的奇幻世界”，你可以保存为浏览器标签，方便跳转。
+以下例子为连接局域网IP为 192.168.1.102 的机器，数据刷新时间间隔 120 秒，该机器名称为“我的奇幻世界”，你可以保存为浏览器标签，方便跳转。
 
 go.html?ip=192.168.1.102&time=120&title=我的奇幻世界

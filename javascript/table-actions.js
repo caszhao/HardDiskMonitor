@@ -152,7 +152,7 @@ class TableActions {
     self.tableRows.sort(function (val, nextVal) {
       val = val.querySelectorAll("td")[thIndex].innerHTML;
       nextVal = nextVal.querySelectorAll("td")[thIndex].innerHTML;
-
+      try{
       if (format) {
         [val, nextVal] = self._sortDataFormat(format, val, nextVal);
       } else {
@@ -169,6 +169,10 @@ class TableActions {
           nextVal = toNormalForm(nextVal);
         }
       }
+    }
+    catch(err) {
+      console.log('非数字不能排序');
+    }
 
       if ((asc && val > nextVal) || (!asc && val < nextVal)) {
         return 1;

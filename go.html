@@ -36,7 +36,7 @@
         </div>
 
 
-        <table id="machineTable" class="table">
+        <table id="machineTable" >
             <thead>
                 <tr>
                     <th>
@@ -214,18 +214,18 @@
                     str += '</tr>';
                 });
                 contain.innerHTML = str;
-	const table = new TableActions("harddiskTable ", {
-            sortable: true,
-            paginable: false,
-            checkableRows: false,
-            checkableRowTdReference: "[data-ref]",
-            checkedElementsCallBack: function (checkedElements) {
-                document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
-            },
-        });
-        function toggleTheme() {
-            document.querySelector("body").classList.toggle("dark")
-        }
+                const table = new TableActions("harddiskTable", {
+                    sortable: true,
+                    paginable: false,
+                    checkableRows: false,
+                    checkableRowTdReference: "[data-ref]",
+                    checkedElementsCallBack: function (checkedElements) {
+                        document.querySelector("#result>span").innerHTML = checkedElements.join(", ")
+                    },
+                });
+                function toggleTheme() {
+                    document.querySelector("body").classList.toggle("dark")
+                }
             }        
             
             str = '';

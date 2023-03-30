@@ -10,18 +10,69 @@ import socket
 import time
 import psutil
 import glob
+import platform
+import wmi
+
+if ('Windows' == platform.system()):
+    print('Windows')
+elif ('Linux' == platform.system()):
+    print('Linux')
+else:
+    print(platform.system())
+
 
 refresh_interval = 30
 
+#获取windows硬盘
+def disk():
+    c = wmi.WMI ()
+    Disks = []
+    #默认测试假数据
+    Disks.append({"ID": '345', 
+                "IP": '123', 
+                "Serial": '123', 
+                "DeviceName": '123', 
+                "Model": '123', 
+                "Size": '123', 
+                "Used": '123', 
+                "Usaged": '123', 
+                "NumOfPlot": '123', 
+                "Temp": '123', 
+                "Path": '123', 
+                "Healthy": '123', 
+                "GetDateTime": time.strftime("%Y-%m-%d %H:%M:%S")})
+    for physical_disk in c.Win32_DiskDrive ():           
+         Disks.append({"ID": '123', 
+                "IP": '123', 
+                "Serial": physical_disk.SerialNumber, 
+                "DeviceName": physical_disk.Caption, 
+                "Model": '123', 
+                "Size": physical_disk.Size, 
+                "Used": '123', 
+                "Usaged": '123', 
+                "NumOfPlot": '123', 
+                "Temp": '123', 
+                "Path": physical_disk.DeviceID, 
+                "Healthy": physical_disk.Status, 
+                "GetDateTime": time.strftime("%Y-%m-%d %H:%M:%S")})
+         
+        
+    return Disks
 
 def get_mounted_devices():
     # 获取已挂载的设备节点
-    try  :
-        output = subprocess.check_output(['lsblk', '-o', 'NAME,MOUNTPOINT,TYPE', '-r']).decode('utf-8')
-        lines = output.strip().split('\n')
-    except Exception as e :
-        print(e)
-        print("Error Command: lsblk -o NAME,MOUNTPOINT,TYPE")
+    # 这个不适合windows，属于linux命令模式，需要做适配
+    lines= ""
+    if ('Windows' == platform.system()):
+        print(platform.system())
+    else:    
+        try  :
+            output = subprocess.check_output(['lsblk', '-o', 'NAME,MOUNTPOINT,TYPE', '-r']).decode('utf-8')
+            lines = output.strip().split('\n')
+        except Exception as e :
+            print(e)
+            print("Error Command: lsblk -o NAME,MOUNTPOINT,TYPE")
+    
 
     devices = {}
     for line in lines:
@@ -37,6 +88,7 @@ def get_disk_info(device):
     # 获取硬盘信息
     lines = ""
     try  :
+        
         output = subprocess.check_output(['smartctl', '-i', '/dev/' + device]).decode('utf-8')
         lines = output.strip().split('\n')
     except Exception as e :
@@ -207,7 +259,9 @@ async def send_json(websocket, path):
                                     "Healthy": info['health'], 
                                     "GetDateTime": time.strftime("%Y-%m-%d %H:%M:%S")})
         print("*******************************************")
-
+        
+        if ('Windows' == platform.system()):
+            Disks = disk()
         monitor_data['Disks'] = Disks
 
         mem_percent, mem_used, mem_total = get_memory_usage()

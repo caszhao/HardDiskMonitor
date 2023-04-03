@@ -11,9 +11,9 @@ import time
 import psutil
 import glob
 import platform
-import wmi
 
 if ('Windows' == platform.system()):
+    import wmi
     print('Windows')
 elif ('Linux' == platform.system()):
     print('Linux')

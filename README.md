@@ -47,7 +47,9 @@ sudo apt install ./hddtemp_0.3-beta15-53_amd64.deb
 
 sudo python3 server_websocket.py
 
-当然，你也可以后台运行。  nohup sudo python3 ./server_websocket.py >log.txt 2>err.txt &
+当然，ssh会话下，你也可以后台运行:
+
+nohup sudo python3 -u server_websocket.py >log.txt 2>err.txt &
 
 如果你的Linux主机有多个局域网IP，你可能需要手动修改server_websocket.py把IP固定下来，搜索local_ip，并改成你要的ip即可。默认端口为8765，如果没有冲突，可以不改。
 

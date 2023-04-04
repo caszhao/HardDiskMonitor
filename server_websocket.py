@@ -12,6 +12,8 @@ import psutil
 import glob
 import platform
 
+refresh_interval = 30
+
 if ('Windows' == platform.system()):
     import wmi
     print('Windows')
@@ -20,8 +22,16 @@ elif ('Linux' == platform.system()):
 else:
     print(platform.system())
 
+def get_host_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))  # 114.114.114.114也是dns地址
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
 
-refresh_interval = 30
+local_ip=get_host_ip()
 
 #获取windows硬盘
 def disk():
@@ -142,15 +152,6 @@ def get_root_plot_files(path):
     # 获取硬盘根目录下的.plot文件数量
     plot_files = glob.glob(os.path.join(path, "*.plot"))
     return len(plot_files)
-
-def get_host_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('8.8.8.8', 80))  # 114.114.114.114也是dns地址
-        ip = s.getsockname()[0]
-    finally:
-        s.close()
-    return ip
 
 # 获取CPU使用率
 def get_cpu_usage():
@@ -285,9 +286,10 @@ async def send_json(websocket, path):
         await asyncio.sleep(refresh_interval)
 
 
-local_ip=get_host_ip()
+async def serve():
+    print('Current IP addr:' + local_ip)
+    start_server = await websockets.serve(send_json, local_ip, 8765)
+    await start_server.wait_closed()
 
-start_server = websockets.serve(send_json, local_ip, 8765)
-
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+if __name__ == '__main__':
+    asyncio.run(serve())

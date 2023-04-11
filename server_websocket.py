@@ -135,22 +135,30 @@ def get_disk_info(device):
     for line in lines:
         parts = line.strip().split(':')
         if len(parts) == 1 and len(parts[0].strip()) < 3 and parts[0].strip().isdigit():
-            info['temperature'] = parts[0].strip()
+            temper = int(parts[0].strip())
+            if temper >= 55:
+               info['temperature'] = "<font color=red>"+parts[0].strip()+"</font>" 
+            elif temper >=50:
+                info['temperature'] = "<font color='#FFFF00'>"+parts[0].strip()+"</font>"
+            else: 
+                info['temperature'] = "<font color='#00FF00'>"+parts[0].strip()+"</font>"
 
     # Health
-    output = subprocess.check_output(['smartctl', '-H', '/dev/' + device]).decode('utf-8')
-    lines = output.strip().split('\n')
-    devices = {}
-    for line in lines:
-        if 'PASSED' in line:
-            info['health'] = 'Health'
-
+    try :
+       output = subprocess.run(['sudo', 'smartctl', '-H', '/dev/' + device], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+       print(output) 
+       if "PASSED" in output.stdout.decode('utf8'): 
+           info['health'] = 'Health'
+    except Exception as e :
+        print(e)
     print('====================get_disk_info--=====================')
     return info
 
 def get_root_plot_files(path):
-    # 获取硬盘根目录下的.plot文件数量
-    plot_files = glob.glob(os.path.join(path, "*.plot"))
+    # 获取硬盘根目录及一级目录下的.plot文件数量
+    extension = '*.plot'
+    search_path = os.path.join(path, '**', extension)
+    plot_files = glob.glob(search_path, recursive=True)
     return len(plot_files)
 
 # 获取CPU使用率
@@ -234,8 +242,10 @@ async def send_json(websocket, path):
                         info['capacity'] = getHumanSize(total)
                         info['used'] = getHumanSize(used)
                         info['usage'] = parts[4]
-                        
-                        plot_num = get_root_plot_files(mount_point)
+                        if mount_point != '/':
+                            plot_num = get_root_plot_files(mount_point)
+                        else:
+                            plot_num = 0
                         total_plot_num += plot_num
                         info['plot'] = str(plot_num)
                         #total = parts[1]
@@ -293,3 +303,5 @@ async def serve():
 
 if __name__ == '__main__':
     asyncio.run(serve())
+
+
